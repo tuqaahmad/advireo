@@ -1,15 +1,13 @@
 import { useState } from "react";
 
-export default function Form() {
-  const audience = [
-    { name: "West Amman Dentists" },
-    { name: "Shemesani Internists" },
-    { name: "Aqaba Cardiologists" },
-    { name: "Khaldi Cardiologists" },
-    { name: "East Amman GPs" },
-    { name: "Irbid Dermatologists" },
-  ];
-
+export default function Form({
+  audience,
+  handleChange,
+  submit,
+  preview_image,
+  fileInput,
+  s3,
+}) {
   const [image, setImage] = useState(false);
   const [brodcast, setBrodcastMsg] = useState(false);
 
@@ -35,15 +33,15 @@ export default function Form() {
                     Cover photo
                   </label>
 
-                  {image ? (
+                  {s3.image ? (
                     <img
-                      src="https://www.pharmacy.biz/wp-content/uploads/sites/1/2021/05/Panadol-More-Laughs-Less-Pain.png"
-                      alt="img"
+                      src={s3.image}
+                      alt="s3"
                       className="justify-center mx-auto h-80 w-auto"
                     />
                   ) : null}
 
-                  {image ? null : (
+                  {s3.image ? null : (
                     <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                       <div className="space-y-1 text-center">
                         <svg
@@ -71,9 +69,8 @@ export default function Form() {
                               name="file-upload"
                               type="file"
                               className="sr-only"
-                              onClick={() => {
-                                setImage(true);
-                              }}
+                              ref={fileInput}
+                              onChange={preview_image}
                             />
                           </label>
                           <p className="pl-1">or drag and drop</p>
@@ -86,13 +83,13 @@ export default function Form() {
                   )}
                 </div>
               </div>
-              <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
-                <button
+              <div className="px-4 py-6 bg-gray-50 text-right sm:px-6">
+                {/* <button
                   type="submit"
                   className="inline-flex justify-center py-2 px-8 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                 >
                   Upload
-                </button>
+                </button> */}
               </div>
             </div>
           </div>
@@ -131,16 +128,14 @@ export default function Form() {
                           <div className="flex items-center h-5">
                             <input
                               id="comments"
-                              name="comments"
+                              name={item.name}
                               type="checkbox"
                               className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                              onChange={handleChange}
                             />
                           </div>
                           <div className="ml-3 text-sm">
-                            <label
-                              htmlFor="comments"
-                              className="font-medium text-gray-700"
-                            >
+                            <label className="font-medium text-gray-700">
                               {item.name}
                             </label>
                           </div>
@@ -155,10 +150,11 @@ export default function Form() {
                   type="submit"
                   className="inline-flex justify-center py-2 px-7 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                   onClick={() => {
+                    submit();
                     setBrodcastMsg(true);
                     setTimeout(() => {
                       window.location.reload(true);
-                    }, 2000);
+                    }, 2700);
                   }}
                 >
                   Brodcast
